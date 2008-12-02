@@ -32,6 +32,7 @@
     ((string= p "!" :end1 1) (handle-any p f a-list (lambda (a b) (not (equal a b)))))
     ((string= p "<" :end1 1) (handle-any p f a-list #'trapping-< ))
     ((string= p ">" :end1 1) (handle-any p f a-list #'trapping-> ))
+    ((string= p "*") (or a-list T)) ;wildcard: match anything, but don't capture
     ((equal p f) (or a-list T))
   )
 )
@@ -99,7 +100,8 @@
 	      ((fact (car current-list))  
 	       (new-bindings (match pattern fact input-bindings))
 	       )
-;(print (format nil "Trying fact ~a against pattern ~a with binding list ~a... " fact pattern input-bindings))
+; Comment out for debug trace:
+; (format T "Trying fact ~a against pattern ~a with binding list ~a... ~%" fact pattern input-bindings)
 	    ; If a match is found, recurse with a depth-first search, looking 
 	    ; for matches on the remaining patterns with the updated bindings
 	    (if new-bindings
