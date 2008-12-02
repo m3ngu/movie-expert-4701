@@ -16,7 +16,10 @@ Arguments:
 
 == match pattern syntax ==
 
-So far, largely the same as what was in the original assignment.
+So far, largely the same as what was in the original assignment.  Additions:
+
+  * If a pattern looks like `("|" p1 p2 p3)`, it matches against a single atomic fact, and is true if any of the patterns match.
+  * The pattern "`*`" matches any fact.
 
 = match-rule =
 
