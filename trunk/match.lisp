@@ -37,9 +37,9 @@
 )
 
 ;; Test a single fact against a (& ...) pattern
-(defun test-group (p f a-list)
+(defun test-group-and (p f a-list)
   ( if (null (cdr p)) (handle-more (car p) f a-list)
-       (let (( cdr-return  (test-group (cdr p) f a-list) )) 
+       (let (( cdr-return  (test-group-and (cdr p) f a-list) )) 
 	 (if cdr-return 
 	     (handle-more (car p) f (if (consp cdr-return) cdr-return a-list))
 	     NIL
@@ -47,12 +47,18 @@
 	 )
    )
 )
+(defun test-group-or (p f a-list)
+  (and p
+       (let ((car-return (handle-more (car p) f a-list)))
+	 (or car-return   (test-group-or (cdr p) f a-list)))
+))
 
 ;; The match function.  Happily short, thanks to all the mess above.
 (defun match (p f &optional (a-list '()))
   (cond
     ( (atom p) (handle-more p f a-list))
-    ( (eql '& (car p)) (test-group (cdr p) f a-list) )
+    ( (eql '& (car p)) (test-group-and (cdr p) f a-list) )
+    ( (equal "|" (car p)) (test-group-or (cdr p) f a-list) )
     ( (consp f) (let ( (car-resp (match (car p) (car f) a-list)))
         ( if (null car-resp) NIL 
 	  (match (cdr p) (cdr f) (if (consp car-resp) car-resp '()))
