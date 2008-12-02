@@ -1,0 +1,19 @@
+#summary The functions that must at some point be implemented
+#labels Featured,Phase-Design
+
+A brief list of function signatures.  As things actually get implemented, pages should be added describing them slightly more formally.
+
+  # `match(fact, pattern, &optional previous-bindings)` ; returns T/NIL/({new-bindings})
+  # `match-rule(patterns(LHS of rules), WM(list of facts), &optional partial-matches) ;` returns T/NIL/(((bindings) (facts)) ...)
+  # `Delete({match-rule}, WM)` ; returns new-WM
+  # `Add(fact, WM)` ; returns new-WM
+  # `Do-Action(action-pattern(RHS of rules), <match-rule>, WM)`
+  # `Substitute(binding-list, pattern)` ; returns fact . Also handles list elements like (+ 5 7).
+  # `engine(rules, WM)` ; returns WM
+
+
+Current task allocation:
+
+  * match, match-rule:  Ben and Ashish
+  * Do-action, Delete, Add, Engine : Mehmet, Snehit
+  * Substitute : Vivek, Mengu
