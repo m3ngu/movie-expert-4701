@@ -49,7 +49,8 @@
   (  (=a (& b <a)) (42 b) NIL ) ; must not blow up
   (  (=a (& b >a =b b)) (a b) ((=A . A) (=B . B)) ) ; slightly more complicated
   (  (=a (& b <a =b b)) (a b) NIL ) ; an obvious failure case
-	      
+  (  (a =b *) (a c e) ( (=B . C)))  ; wildcard test	      
+  (  (a * !b) (a c e) NIL )  ; wildcard test (negative)	      
 )
 	    
 )
