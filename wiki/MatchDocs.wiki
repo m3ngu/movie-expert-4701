@@ -1,5 +1,7 @@
+#summary API Documentation for match and match-rule
 #labels Phase-Implementation
-#API Documentation for match and match-rule
+#sidebar TableOfContents
+
 
 This is the wiki documentation for the code in "match.lisp": this should be sufficient to program against, but in case of difficulty, see that file in the svn repository.
 
