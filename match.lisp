@@ -24,24 +24,15 @@
 
 (defun trapping-> (x y) (trapping-< y x))
 
-;; Handle any non-numeric pattern/fact combination, including specials.
-(defun handle-it (p f a-list)
+;; Handle any pattern/fact combination, including specials.
+(defun handle-more (p f a-list)
   (cond  
+    ((numberp p) (and (numberp f) (= p f) (or a-list T)))
     ((string= p "=" :end1 1) (handle-any p f a-list #'equal T))
-    ((string= p "!" :end1 1) (handle-any p f a-list (lambda (a b) (not (eql a b)))))
+    ((string= p "!" :end1 1) (handle-any p f a-list (lambda (a b) (not (equal a b)))))
     ((string= p "<" :end1 1) (handle-any p f a-list #'trapping-< ))
     ((string= p ">" :end1 1) (handle-any p f a-list #'trapping-> ))
-    ((eql p f) (or a-list T))
-  )
-)
-
-;; Handle any pattern/fact combination.  This is the culmination of a series
-;; of increasingly ill-advised function names, for which I apologize, and 
-;; make a wholehearted promise to amend my behavior.
-(defun handle-more (p f a-list)
-  (cond 
-    ((symbolp p) (handle-it p f a-list))
-    ((= p f) (or a-list T))
+    ((equal p f) (or a-list T))
   )
 )
 
@@ -57,7 +48,7 @@
    )
 )
 
-;; The final product.  Happily short, thanks to all the mess above.
+;; The match function.  Happily short, thanks to all the mess above.
 (defun match (p f &optional (a-list '()))
   (cond
     ( (atom p) (handle-more p f a-list))
@@ -69,3 +60,54 @@
     )) 
   )
 )
+
+;; Match-rule: do a depth-first search through the working memory, searching
+;; for combinations of facts that match the list of patterns given.
+;;
+;; Arguments:
+;;    pattern-list: a proper list of patterns that may match a fact in the WM
+;;    WM          : the working memory object (currently a flat list of facts)
+;;    partial-match-list: an optional two-element list.
+;;      item 1: the bindings from any parent matches in the search tree
+;;      item 2: the actual facts that were successfully matched in the parent
+;;              matches
+
+;; Notes:
+;;  * Both WM and partial-match-list are excellent candidates for refactoring
+;;    into structures/objects
+;;  * Have to check to see if T as a parent binding return will cause problems
+
+(defun match-rule (pattern-list WM &optional (partial-match-list NIL)) 
+  (if (null pattern-list) partial-match-list
+      (let 
+	  ((pattern (car pattern-list))
+	   (input-bindings (car partial-match-list))  ; any bindings from parent calls
+	   (previous-facts (cadr partial-match-list)) ; facts bound in parent calls
+	   )
+	; Loop over elements in WM, finding matches for the current pattern
+	(do ((current-list WM (cdr current-list))
+	     (return-value NIL return-value)
+	     )
+	    ((or return-value (null current-list)) return-value)
+	  (let* 
+	      ((fact (car current-list))  
+	       (new-bindings (match pattern fact input-bindings))
+	       )
+;(print (format nil "Trying fact ~a against pattern ~a with binding list ~a... " fact pattern input-bindings))
+	    ; If a match is found, recurse with a depth-first search, looking 
+	    ; for matches on the remaining patterns with the updated bindings
+	    (if new-bindings
+		(let ((answer (match-rule 
+			       (cdr pattern-list)
+			       WM
+			       (list 
+				new-bindings 
+				(append previous-facts (list fact) )
+				)
+			       )
+			))
+		  (if answer (setf return-value answer) NIL)
+		)
+		NIL ; proceed to next element
+	  ))) ; end (do...)
+)))
