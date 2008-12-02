@@ -14,6 +14,6 @@ A brief list of function signatures.  As things actually get implemented, pages 
 
 Current task allocation:
 
-  * match, match-rule:  Ben and Ashish
+  * match, match-rule:  Ben and Ashish (done: see MatchDocs)
   * Do-action, Delete, Add, Engine : Mehmet, Snehit
   * Substitute : Vivek, Mengu
