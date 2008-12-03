@@ -44,3 +44,4 @@ Arguments:
 Notes:
   * Both WM and partial-match-list are excellent candidates for refactoring   into structures/objects
   * Have to check to see if T as a parent binding return will cause problems (seems not to, though)
+  * Still doesn't check closed-list
