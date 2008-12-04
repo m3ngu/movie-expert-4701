@@ -1,4 +1,4 @@
-#summary CLOS objects created for movie-expert.  TO make your life easier, really!
+#summary CLOS objects created for movie-expert.  To make your life easier, really!
 #labels Featured,Phase-Implementation
 
 = Rule =
