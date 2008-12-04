@@ -10,6 +10,8 @@
 	     :initarg :action-list
 	     :reader  action-list
 	     )
+   (exhaustible :initarg :exhaustible :initform nil :reader exhaustible)
+   (exhausted   :initform nil :accessor exhausted)
   )
 )
 (defmethod initialize-instance :after ((rule RULE) &key)
@@ -35,6 +37,11 @@
       (member factlist (closed-list rule) :test #'memberp)
       NIL
       )
+)
+
+(defgeneric exhaust (rule))
+(defmethod exhaust ((rule RULE))  ; always returns NIL
+  (and (exhaustible rule) (setf (slot-value rule 'exhausted) T) NIL)
 )
 
 (defclass expert-wm ()
