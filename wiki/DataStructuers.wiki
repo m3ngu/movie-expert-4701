@@ -1,0 +1,34 @@
+#summary CLOS objects created for movie-expert.  TO make your life easier, really!
+#labels Featured,Phase-Implementation
+
+= Rule =
+
+Rules are rules.
+
+==Methods==
+
+`(add-to-closed rule result)`
+
+{{{
+(defvar rule1 (make-instance 'RULE 
+    :pattern-list '((movie =mname 2006 * * * * *)  (user-input =mname))
+    :action-list   '((ADD (user-likes-new-movies)))
+    :match-length 1
+))
+}}}
+
+==Accessors==
+
+  * pattern-list
+  * closed-list
+  * action-list
+  * match-length
+
+= Expert-WM =
+
+Is a partitioned list, that's all...
+
+==Methods==
+
+  * `(add-fact wm fact)`  Prepends new facts
+  * `(candidate-list wm fact-type)`  Returns a list that is guaranteed to include all possible matches for that fact type
