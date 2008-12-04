@@ -59,26 +59,40 @@
 (setf test-wm
   '(
     (movie "Quantum of Solace" (action 1) (comedy 0))
-    (movie "The Court Jester" (action 0) (comedy 1))
     (movie "The Fellowship of the Ring" (action 0) (comedy 0))
+    (movie "The Court Jester" (action 0) (comedy 1))
+    (movie "Sabrina" (action 0) (comedy 0))
     (director "The Fellowship of the Ring" "Jackson, Peter")
+    (director "The Court Jester" "Somebody Other than Peter Jackson")
     (actor "The Fellowship of the Ring" "Wood, Elijah")
+    (actor "The Fellowship of the Ring" "Tyler, Liv")
+    (actor "The Court Jester" "Kaye, Danny")
+    (actor "The Court Jester" "Rathbone, Basil")
+    (actor "The Court Jester" "Lansbury, Angela")
+    (actor "Quantum of Solace" "Craig, Daniel")
     )
 )
 (defvar find-peter-jackson NIL)
-(setf find-peter-jackson '(
+(setf find-peter-jackson 
+      (make-instance 'rule :pattern-list
+'(
   (movie =mname (action =a) (comedy =c))
   (director =mname =dirname)
- )
+ ))
 )
 (defvar find-bond-21 NIL)
-(setf find-bond-21 '((movie =mname (action 1) (comedy 0))))
+(setf find-bond-21       
+      (make-instance 'rule 
+       :pattern-list  '((movie =mname (action 1) (comedy 0)))
+))
 (defvar find-bond-and-jackson NIL)
 (setf find-bond-and-jackson 
+      (make-instance 'rule :pattern-list
       '(    
 	(movie "Quantum of Solace" (action 1) (comedy 0)) 
 	(director =mname =dirname)
 	)
+      )
 )
 (format T "~%testing 'match-rule'~%")
 (tap-output 
