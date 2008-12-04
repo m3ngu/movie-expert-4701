@@ -14,11 +14,13 @@
     )
 )
 (defvar find-peter-jackson NIL)
-(setf find-peter-jackson '(
-  (movie =mname (action =a) (comedy =c))
-  (director =mname =dirname)
- )
-)
+(setf find-peter-jackson        
+      (make-instance 'rule 
+		     :pattern-list '(
+		       (movie =mname (action =a) (comedy =c))
+		       (director =mname =dirname)
+		      )
+))
 
 ;; Bindings is the first part of what match-rule returns
 ;; NOTE: We're manually adding a binding (=rank . 5) to test the evaluation
