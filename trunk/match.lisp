@@ -1,3 +1,5 @@
+(load "datastructures.lisp")
+
 ;; This handles any (hence the name) of the special patterns (!=<>), if passed
 ;; the appropriate function as an argument.  Should only be passed the 
 ;; auto-vivify argument if the pattern was "=..."
@@ -68,8 +70,24 @@
   )
 )
 
-;; Match-rule: do a depth-first search through the working memory, searching
-;; for combinations of facts that match the list of patterns given.
+;; Match-rule: take a rule object and a working memory (currently a
+;; flat list of facts) and return the first *new* match for this rule
+;; in the working memory, adding the facts used in the match to the
+;; closed list of the rule.
+
+(defun match-rule (rule WM) 
+  (let ((patterns (pattern-list rule))
+	(closed-list (closed-list rule))
+	)
+    (let ((result (match-rule-helper patterns closed-list WM)))
+      (and result (add-to-closed rule  result))
+   )
+))
+				      
+
+;; Match-rule-helper: do a depth-first search through the working
+;; memory, searching for combinations of facts that match the list of
+;; patterns given.
 ;;
 ;; Arguments:
 ;;    pattern-list: a proper list of patterns that may match a fact in the WM
@@ -82,10 +100,13 @@
 ;; Notes:
 ;;  * Both WM and partial-match-list are excellent candidates for refactoring
 ;;    into structures/objects
-;;  * Have to check to see if T as a parent binding return will cause problems
 
-(defun match-rule (pattern-list WM &optional (partial-match-list NIL)) 
-  (if (null pattern-list) partial-match-list
+(defun match-rule-helper (pattern-list closed-list WM &optional (partial-match-list NIL)) 
+  (if (null pattern-list) 
+      (if (member (cadr partial-match-list) closed-list :test #'memberp) 
+	  NIL 
+	  partial-match-list
+       )
       (let 
 	  ((pattern (car pattern-list))
 	   (input-bindings (car partial-match-list))  ; any bindings from parent calls
@@ -105,8 +126,9 @@
 	    ; If a match is found, recurse with a depth-first search, looking 
 	    ; for matches on the remaining patterns with the updated bindings
 	    (if new-bindings
-		(let ((answer (match-rule 
+		(let ((answer (match-rule-helper
 			       (cdr pattern-list)
+			       closed-list
 			       WM
 			       (list 
 				new-bindings 
@@ -119,3 +141,15 @@
 		NIL ; proceed to next element
 	  ))) ; end (do...)
 )))
+
+; Fact-list equality test: since facts are immutable, we just need to
+; test for top-level equality of each member of the two lists we're
+; comparing
+(defun memberp (a b) 
+  (if (null a) (null b)
+      (and 
+       (eql (car a) (car b))
+       (memberp (cdr a) (cdr b))
+      )
+  )
+)
