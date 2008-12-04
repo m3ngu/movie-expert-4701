@@ -1,19 +1,40 @@
-(defclass RULE () 
+ (defclass RULE () 
   (
-   (patterns :initarg :pattern-list :reader pattern-list)
+   (patterns :initarg :pattern-list 
+	     :reader pattern-list
+	     :initform (error "Patterns required for rule instantiation")
+	     )
    (closed   :initform '()  :accessor closed-list)
-   
+   (match-length :initarg :match-length :initform -1 :reader match-length)
    (actions  :initform '();(error "Actions required for rule") 
 	     :initarg :action-list
 	     :reader  action-list
 	     )
   )
 )
+(defmethod initialize-instance :after ((rule RULE) &key)
+  (and (= -1 (match-length rule))
+       (setf (slot-value rule 'match-length) (length (pattern-list rule)))
+))
 
 (defgeneric add-to-closed (rule result))
 (defmethod add-to-closed ((rule RULE) result)
-  (setf (closed-list rule) (cons (cadr result) (closed-list rule)))
-  result
+  (let ((closure-prefix 
+	 (if (< (match-length rule) (length (cadr result)))
+	     (prefix (cadr result) (match-length rule))
+	     (cadr result)
+	     )
+	  ))
+    (setf (closed-list rule) (cons closure-prefix (closed-list rule)))
+    result
+))
+
+(defgeneric closedp (rule factlist))
+(defmethod closedp ((rule RULE) factlist)
+  (if (= (length factlist) (match-length rule))
+      (member factlist (closed-list rule) :test #'memberp)
+      NIL
+      )
 )
 
 (defclass expert-wm ()
@@ -63,9 +84,22 @@
 ;;;;;;;;
 ;; Utility functions
 ;;;;;;;;
-; This might be useful, or it might not.  Right now, I'm inclined to say
-; not, but it's cute, so whatever...
+
+; Get a prefix of an arbitrary list (used for closed-lists with
+; shorter-than-usual match lengths).
 (defun prefix (somelist elem-count &optional xifrep) 
   (if (= 0 elem-count) (reverse xifrep) 
       (prefix (cdr somelist) (1- elem-count) (cons (car somelist) xifrep))
 ))
+
+; Fact-list equality test: since facts are immutable, we just need to
+; test for top-level equality of each member of the two lists we're
+; comparing
+(defun memberp (a b) 
+  (if (null a) (null b)
+      (and 
+       (eql (car a) (car b))
+       (memberp (cdr a) (cdr b))
+      )
+  )
+)
