@@ -120,6 +120,15 @@
 	)
       )
 )
+(defvar find-some-actor-once)
+(setf find-some-actor-once
+      (make-instance 
+       'rule
+       :pattern-list '((movie =mname * *) (actor =mname =aname))
+       :match-length 1
+       :action-list '()
+       )
+)
 (format T "~%testing 'match-rule'~%")
 (tap-output 
  #'match-rule 
@@ -151,7 +160,18 @@
 	   (DIRECTOR "The Court Jester" "Somebody Other than Peter Jackson")
 	   )
 	  )
-)
-
-
+	)
+  (list find-some-actor-once fancy-wm
+	'(((=MNAME . "Quantum of Solace") (=ANAME . "Craig, Daniel"))
+	 ((MOVIE "Quantum of Solace" (ACTION 1) (COMEDY 0)) (ACTOR "Quantum of Solace" "Craig, Daniel")))
+  )
+  (list find-some-actor-once fancy-wm
+	'(((=MNAME . "The Fellowship of the Ring") (=ANAME . "Wood, Elijah"))
+	 ((MOVIE "The Fellowship of the Ring" (ACTION 0) (COMEDY 0)) (ACTOR "The Fellowship of the Ring" "Wood, Elijah")))
+  )
+  (list find-some-actor-once fancy-wm
+	'(((=MNAME . "The Court Jester") (=ANAME . "Kaye, Danny"))
+	 ((MOVIE "The Court Jester" (ACTION 0) (COMEDY 1)) (ACTOR "The Court Jester" "Kaye, Danny")))
+  )
+  (list find-some-actor-once fancy-wm NIL)
 ))

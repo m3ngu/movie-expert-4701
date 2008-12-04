@@ -77,9 +77,8 @@
 
 (defun match-rule (rule WM) 
   (let ((patterns (pattern-list rule))
-	(closed-list (closed-list rule))
 	)
-    (let ((result (match-rule-helper patterns closed-list WM)))
+    (let ((result (match-rule-helper patterns rule WM)))
       (and result (add-to-closed rule  result))
    )
 ))
@@ -101,12 +100,9 @@
 ;;  * Both WM and partial-match-list are excellent candidates for refactoring
 ;;    into structures/objects
 
-(defun match-rule-helper (pattern-list closed-list WM &optional (partial-match-list NIL)) 
+(defun match-rule-helper (pattern-list rule WM &optional (partial-match-list NIL)) 
   (if (null pattern-list) 
-      (if (member (cadr partial-match-list) closed-list :test #'memberp) 
-	  NIL 
-	  partial-match-list
-       )
+      partial-match-list
       (let 
 	  ((pattern (car pattern-list))
 	   (input-bindings (car partial-match-list))  ; any bindings from parent calls
@@ -120,20 +116,18 @@
 	  (let* 
 	      ((fact (car current-list))  
 	       (new-bindings (match pattern fact input-bindings))
+	       (new-fact-list (append previous-facts (list fact)))
 	       )
 ; Comment out for debug trace:
 ; (format T "Trying fact ~a against pattern ~a with binding list ~a... ~%" fact pattern input-bindings)
 	    ; If a match is found, recurse with a depth-first search, looking 
 	    ; for matches on the remaining patterns with the updated bindings
-	    (if new-bindings
+	    (if (and new-bindings (not (closedp rule new-fact-list)))
 		(let ((answer (match-rule-helper
 			       (cdr pattern-list)
-			       closed-list
+			       rule
 			       WM
-			       (list 
-				new-bindings 
-				(append previous-facts (list fact) )
-				)
+			       (list new-bindings new-fact-list)
 			       )
 			))
 		  (if answer (setf return-value answer) NIL)
@@ -142,14 +136,3 @@
 	  ))) ; end (do...)
 )))
 
-; Fact-list equality test: since facts are immutable, we just need to
-; test for top-level equality of each member of the two lists we're
-; comparing
-(defun memberp (a b) 
-  (if (null a) (null b)
-      (and 
-       (eql (car a) (car b))
-       (memberp (cdr a) (cdr b))
-      )
-  )
-)
