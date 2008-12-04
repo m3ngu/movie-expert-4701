@@ -1,6 +1,7 @@
 (defvar knowledge-base nil)
 (setf knowledge-base 
-'(
+(make-instance 'expert-wm :facts
+'((movie 
 (movie "Shawshank\ Redemption\,\ The\ \(1994\)" 1994 9.100000 (Action 0) (Adventure 0) (Animation 0) (Biography 0) (Comedy 0) (Crime 0) (Drama 1) (Family 0) (Fantasy 0) (Film-Noir 0) (History 0) (Horror 0) (Musical 0) (Mystery 0) (Romance 0) (Sci-Fi 0) (Sport 0) (Thriller 0) (War 0) (Western 0))
 (movie "Godfather\,\ The\ \(1972\)" 1972 9.100000 (Action 0) (Adventure 0) (Animation 0) (Biography 0) (Comedy 0) (Crime 0) (Drama 1) (Family 0) (Fantasy 0) (Film-Noir 0) (History 0) (Horror 0) (Musical 0) (Mystery 0) (Romance 0) (Sci-Fi 0) (Sport 0) (Thriller 1) (War 0) (Western 0))
 (movie "Godfather\:\ Part\ II\,\ The\ \(1974\)" 1974 9.000000 (Action 0) (Adventure 0) (Animation 0) (Biography 0) (Comedy 0) (Crime 0) (Drama 1) (Family 0) (Fantasy 0) (Film-Noir 0) (History 0) (Horror 0) (Musical 0) (Mystery 0) (Romance 0) (Sci-Fi 0) (Sport 0) (Thriller 1) (War 0) (Western 0))
@@ -251,6 +252,8 @@
 (movie "Barry\ Lyndon\ \(1975\)" 1975 7.900000 (Action 0) (Adventure 0) (Animation 0) (Biography 0) (Comedy 0) (Crime 0) (Drama 1) (Family 0) (Fantasy 0) (Film-Noir 0) (History 0) (Horror 0) (Musical 0) (Mystery 0) (Romance 1) (Sci-Fi 0) (Sport 0) (Thriller 0) (War 1) (Western 0))
 (movie "Quatre\ cents\ coups\,\ Les\ \(1959\)" 1959 7.900000 (Action 0) (Adventure 0) (Animation 0) (Biography 0) (Comedy 0) (Crime 1) (Drama 1) (Family 0) (Fantasy 0) (Film-Noir 0) (History 0) (Horror 0) (Musical 0) (Mystery 0) (Romance 0) (Sci-Fi 0) (Sport 0) (Thriller 0) (War 0) (Western 0))
 (movie "Great\ Expectations\ \(1946\)" 1946 7.900000 (Action 0) (Adventure 0) (Animation 0) (Biography 0) (Comedy 0) (Crime 0) (Drama 1) (Family 0) (Fantasy 0) (Film-Noir 0) (History 0) (Horror 0) (Musical 0) (Mystery 0) (Romance 0) (Sci-Fi 0) (Sport 0) (Thriller 0) (War 0) (Western 0))
+)
+(director
 (director "Allen\,\ Woody" "Annie\ Hall\ \(1977\)")
 (director "Allen\,\ Woody" "Manhattan\ \(1979\)")
 (director "Anderson\,\ Paul\ Thomas" "Magnolia\ \(1999\)")
@@ -412,6 +415,8 @@
 (director "Wyler\,\ William" "Roman\ Holiday\ \(1953\)")
 (director "Zemeckis\,\ Robert" "Back\ to\ the\ Future\ \(1985\)")
 (director "Zemeckis\,\ Robert" "Forrest\ Gump\ \(1994\)")
+)
+(actor
 (actor "Abraham\,\ F\.\ Murray" "Amadeus\ \(1984\)" "Antonio\ Salieri" "1")
 (actor "Abraham\,\ F\.\ Murray" "Scarface\ \(1983\)" "Omar\ Suarez" "7")
 (actor "Adams\,\ Ernie\ \(I\)" "It\ Happened\ One\ Night\ \(1934\)" NIL NIL)
@@ -3536,4 +3541,5 @@
 (actor "Wyler\,\ Catherine\ \(I\)" "Roman\ Holiday\ \(1953\)" NIL NIL)
 (actor "Wyler\,\ Judy" "Best\ Years\ of\ Our\ Lives\,\ The\ \(1946\)" NIL NIL)
 (actor "Wyler\,\ Judy" "Roman\ Holiday\ \(1953\)" NIL NIL)
-))
+)))
+)

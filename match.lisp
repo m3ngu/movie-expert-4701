@@ -113,7 +113,7 @@
 	   (previous-facts (cadr partial-match-list)) ; facts bound in parent calls
 	   )
 	; Loop over elements in WM, finding matches for the current pattern
-	(do ((current-list WM (cdr current-list))
+	(do ((current-list (candidate-list WM (car pattern)) (cdr current-list))
 	     (return-value NIL return-value)
 	     )
 	    ((or return-value (null current-list)) return-value)

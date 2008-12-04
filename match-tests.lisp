@@ -72,6 +72,32 @@
     (actor "Quantum of Solace" "Craig, Daniel")
     )
 )
+
+(defvar fancy-wm NIL)
+(setf fancy-wm (make-instance 'expert-wm :facts
+  '(
+    (movie
+     (movie "Quantum of Solace" (action 1) (comedy 0))
+     (movie "The Fellowship of the Ring" (action 0) (comedy 0))
+     (movie "The Court Jester" (action 0) (comedy 1))
+     (movie "Sabrina" (action 0) (comedy 0))
+     )
+    (director
+     (director "The Fellowship of the Ring" "Jackson, Peter")
+     (director "The Court Jester" "Somebody Other than Peter Jackson")
+     )
+    (actor
+     (actor "The Fellowship of the Ring" "Wood, Elijah")
+     (actor "The Fellowship of the Ring" "Tyler, Liv")
+     (actor "The Court Jester" "Kaye, Danny")
+     (actor "The Court Jester" "Rathbone, Basil")
+     (actor "The Court Jester" "Lansbury, Angela")
+     (actor "Quantum of Solace" "Craig, Daniel")
+     )
+   )
+))
+			      
+
 (defvar find-peter-jackson NIL)
 (setf find-peter-jackson 
       (make-instance 'rule :pattern-list
@@ -109,4 +135,23 @@
   (list find-bond-and-jackson test-wm '(((=MNAME . "The Fellowship of the Ring") (=DIRNAME . "Jackson, Peter"))
  ((MOVIE "Quantum of Solace" (ACTION 1) (COMEDY 0))
   (DIRECTOR "The Fellowship of the Ring" "Jackson, Peter"))))
+  (list find-peter-jackson fancy-wm '(((=MNAME . "The Fellowship of the Ring") (=A . 0) (=C . 0)
+  (=DIRNAME . "Jackson, Peter"))
+ ((MOVIE "The Fellowship of the Ring" (ACTION 0) (COMEDY 0))
+  (DIRECTOR "The Fellowship of the Ring" "Jackson, Peter")))
+	)
+  (list find-bond-21 fancy-wm '(((=MNAME . "Quantum of Solace"))
+ ((MOVIE "Quantum of Solace" (ACTION 1) (COMEDY 0)))))
+  (list find-bond-and-jackson fancy-wm '(((=MNAME . "The Fellowship of the Ring") (=DIRNAME . "Jackson, Peter"))
+ ((MOVIE "Quantum of Solace" (ACTION 1) (COMEDY 0))
+  (DIRECTOR "The Fellowship of the Ring" "Jackson, Peter"))))
+  (list find-bond-and-jackson fancy-wm 
+	'(((=MNAME . "The Court Jester") (=DIRNAME .  "Somebody Other than Peter Jackson"))
+	  ((MOVIE "Quantum of Solace" (ACTION 1) (COMEDY 0))
+	   (DIRECTOR "The Court Jester" "Somebody Other than Peter Jackson")
+	   )
+	  )
+)
+
+
 ))
