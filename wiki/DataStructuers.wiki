@@ -15,6 +15,7 @@ Rules are rules.
     :pattern-list '((movie =mname 2006 * * * * *)  (user-input =mname))
     :action-list   '((ADD (user-likes-new-movies)))
     :match-length 1
+    :exhaustible T
 ))
 }}}
 
@@ -24,6 +25,11 @@ Rules are rules.
   * closed-list
   * action-list
   * match-length
+  * exhausted
+
+==Mutators==
+
+  * `exhaust` If this is an exhaustible rule, set exhausted to T.  In any case, return NIL.  (This allows us to limit the number of 20-second exhaustive searches of the working memory that we run.)
 
 = Expert-WM =
 
