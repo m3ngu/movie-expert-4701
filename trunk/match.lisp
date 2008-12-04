@@ -78,9 +78,14 @@
 (defun match-rule (rule WM) 
   (let ((patterns (pattern-list rule))
 	)
-    (let ((result (match-rule-helper patterns rule WM)))
-      (and result (add-to-closed rule  result))
-   )
+    (if (exhausted rule) NIL
+	(let ((result (match-rule-helper patterns rule WM)))
+	  (if result 
+	      (add-to-closed rule  result)
+	      (exhaust rule)
+	  )
+	)
+    )
 ))
 				      
 
