@@ -7,7 +7,8 @@ Rules are rules.
 
 ==Methods==
 
-`(add-to-closed rule result)`
+  * `(add-to-closed rule result)` Add the fact list in this result (or a prefix of that list, if match-length is set to something less than the maximum)  to the closed list for this rule.
+  * `(closedp rule fact-list)` Test if this list of facts is in the closed list (shortcuts quickly for lists of the wrong length).
 
 {{{
 (defvar rule1 (make-instance 'RULE 
