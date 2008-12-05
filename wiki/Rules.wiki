@@ -7,8 +7,8 @@
   # ...
   # Create (user-likes-director =dname =w) objects
   # Create (user-likes-era =ename =w) objects
-  # Create (user-likes-movie =mname =w) objects
   # Create (user-likes-actor =aname =w) objects
   # Filter (user-likes-actor =aname =w) objects for =w > 3
+  # Create (user-likes-movie =mname =w) objects
   # Sort (user-likes-movie =mname =w) objects by descending =w
   # Return first 10
