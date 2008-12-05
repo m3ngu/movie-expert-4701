@@ -40,14 +40,29 @@ I think this is a base fact, since it's part of what we're reasoning from, not s
 
 ==Derived facts==
 
-Facts that are added on the fly.  Currently none, but this must change.  
+==user-likes-genre==
+
+Has a genre and a weight.
+
+==user-likes-director==
+
+Director name and weight.
+
+==user-likes-director==
+
+==user-likes-era==
+
+Maybe?  Might require tweak to the match engine
+
+==recommend-movie==
+
+Movie name and strength of recommendation?
 
 =Known unknowns=
 
 Clearly, we need to expand at least the second part of the list above.  Ideas mentioned so far include:
 
+  * user-likes-frodo 
   * user-likes-genre
   * user-likes-director
   * recommendation
-
-
