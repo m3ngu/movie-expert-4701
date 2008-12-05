@@ -10,5 +10,5 @@ The point is to make the results a little clearer for the TA/Pasik (if he ever l
 
 We can check our results against these sites to see if they somehow align.  Obviously we don't know the rules they're using but its _a_ benchmark.
 
-* http://www.tastekid.com/
-* http://www.criticker.com/
+  * http://www.tastekid.com/
+  * http://www.criticker.com/
