@@ -1,0 +1,12 @@
+#summary One-sentence summary of this page.
+
+= Rules =
+
+  # Create (user-likes-action =w) objects
+  # Create (user-likes-comedy =w) objects
+  # ...
+  # Create (user-likes-director =dname =w) objects
+  # Create (user-likes-actor =aname =w) objects
+  # Create (user-likes-movie =mname =w) objects
+  # Sort
+  # Return top 10
