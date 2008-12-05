@@ -6,7 +6,8 @@
   # Create (user-likes-comedy =w) objects
   # ...
   # Create (user-likes-director =dname =w) objects
-  # Create (user-likes-actor =aname =w) objects
   # Create (user-likes-movie =mname =w) objects
+  # Create (user-likes-actor =aname =w) objects
+  # Filter (user-likes-actor =aname =w) objects for =w > 3
   # Sort
   # Return top 10
