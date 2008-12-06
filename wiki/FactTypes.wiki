@@ -38,23 +38,27 @@ The last two fields are optional, and missing on many actors.  Probably should a
 
 I think this is a base fact, since it's part of what we're reasoning from, not something that we infer.  I don't have a structure for it, though.
 
+===movie-era===
+
+`(movie-era name begindate enddate)`
+
 ==Derived facts==
 
-==user-likes-genre==
+===user-likes-genre===
 
 Has a genre and a weight.
 
-==user-likes-director==
+===user-likes-director===
 
 Director name and weight.
 
-==user-likes-director==
+===user-likes-director===
 
-==user-likes-era==
+===user-likes-era===
 
-Maybe?  Might require tweak to the match engine
+Maybe?  Might require tweak to the match engine.  No, it doesn't, just some new start-up facts.
 
-==recommend-movie==
+===recommend-movie===
 
 Movie name and strength of recommendation?
 
