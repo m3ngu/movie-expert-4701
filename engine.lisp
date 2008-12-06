@@ -140,5 +140,30 @@
   (delete-fact wm fact)
 )
 
+;; Pasik's Quicksort
+
+(defun select (f L key)
+  (cond ((null L) L)
+	((funcall f (caddr (car L)) (caddr key)) 
+	 (cons (car L) (select f (cdr L) key)))
+	(t (select f (cdr L) key))
+	))
+
+(defun quicksort (L &optional (test #'>))
+  (if (or (null L) (null (cdr L))) 
+    L
+    (append (quicksort (select test (cdr L) (car L))
+                       test)
+            (cons (car L) nil)
+            (quicksort
+             (select #'(lambda (x y) 
+                         (not (funcall test x y)))
+                     (cdr L) (car L)) test)
+            )
+    ))
+
+(defun get-top (n L)
+  (subseq (quicksort L) 0 n)
+)
 
 ;;;;
