@@ -132,6 +132,7 @@
 	 (current-list (cdr assoc-cell))
 	 )
     (setf (cdr assoc-cell) (cons fact current-list))
+    wm
   )
 )
 
