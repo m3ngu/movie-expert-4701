@@ -34,6 +34,30 @@
        )
 )
 
+(setf new-actor-rule 
+      (make-instance 'rule 
+       :pattern-list '(
+		       (user-likes-movie =moviename) 
+		       (actor  =actorname =moviename * *)
+		      ) 
+       :action-list '((ADD (user-likes-actor =actorname 0)))
+       :close-on-bindings '(=actorname)
+       :exhaustible T
+       )
+)
+(setf update-actor-rule 
+      (make-instance 'rule 
+       :pattern-list '((user-likes-movie =moviename) 
+		       (actor  =actorname =moviename * *) 
+		       (user-likes-actor =actorname =w))
+       :action-list '((ADD (user-likes-actor =actorname (+ =w 1)))
+		      (REMOVE 3))
+       :match-length 2
+       ; This is true if and only if the rule above is exhausted first
+       ;:exhaustible T 
+
+       )
+)
 ;TRY:
 
 ;(defvar rules-object (initialize test-rule-user-likes-comedy))
