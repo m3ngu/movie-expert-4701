@@ -2,9 +2,9 @@
 
 ;;;;
 ;
-(load "datastructures.lisp")
-(load "match.lisp")
-(load "substitute-action.lisp")
+;(load "datastructures.lisp")
+;(load "match.lisp")
+;(load "substitute-action.lisp")
 ;
 ;;;; 
 ;interpreter function
@@ -33,11 +33,11 @@
 ; 
 ;   optional:
 ;
-;     1.rules-tried: <positive integer>, default 0, keeps how many rules could not fire consequvily. (terminate if tries all the rules)
+;     1.rules-tried: <list>, default NIL, keeps the rules that could not fire consequvily.
 ;     3.rule: <List>, default first element of rules, first rule to be tried, (I assumes a list with 2 elements, first is LHS, second is RHS)
 ;     4.LHS: <List>, default first element (LHS) of first rule.
 ;     5.RHS: <List>, default second element (RHS) of first rule.
-;     6.new-rules: <list>, default rules with first element last, list of rules prioritized to be tried if first rule fails to fire. 
+;     6.new-rules: <list>, default rules with first element removed, list of rules prioritized to be tried if first rule fails to fire. 
 ;
 ;
 ; Output:
@@ -46,29 +46,24 @@
 ;
 ;
 ; Processes rules in list rules on WM, returns when it can not fire any more rules, or when it fires a
-; rule with terminate command in it. o
+; rule with terminate command in it.
 ;
 ;;;;
 
 
 
-;(defvar rule-test (make-instance 'RULE :pattern-list '((MOVIE "Quantum of Solace" (ACTION 1) (COMEDY 0)) (DIRECTOR =MNAME =DIRNAME)) ::action-list '((TERMINATE))))
 
-
-
-
-(defun Engine (rules WM &optional (rules-failed 0) (rule (car rules)) 
-	                          (RHS (get-RHS (car rules)))  ;create  RHS on the go, using this part as an intial let
-                                  (new-rules (append (cdr rules) (list rule))))     ;ready the new-rules order in case rule can not fire (put it at the end)
-  ;(print WM)  ;for debug purposes
-  (cond ((null rules) WM)                                             ;if rules list is empty just return WM
-    ((>= rules-failed (length rules)) WM)                              ;if tried all the rules without any action result, return WM
+(defun Engine (rules WM &optional (rules-failed NIL) (rule (car rules)) 
+	                          (RHS (get-RHS (car rules)))   ;create  RHS on the go, using this part as an intial let
+                                  (new-rules (cdr rules))       ;ready the new-rules order in case rule can not fire
+                                  (new-rules-failed (append rules-failed (list (car rules)))))   ;ready new-rules failed
+  ;(print (car (candidate-list WM 'RECOMMEND-MOVIE)))  ;for debug purposes
+  ;(print (length rules))  ;for debug purposes
+  (cond ((null rules) WM)                                             ;if rules list is empty (all rules failed conseq) just return WM
     (T (let* ((match-result (match-rule rule WM)))
          (if (null match-result)                                      ;if no match is found: 
-             (engine new-rules WM (1+ rules-failed))                   ;call engine again, but lower priority of the rule to lowest, increase rules-failed by 1.
-             (Do-Actions RHS match-result WM rules 0))))))            ;otherwise, call do-actions to decide how to continue (set rules tried to zero)
-
-
+             (engine new-rules WM new-rules-failed)                   ;call engine again, add that rule to rules-failed
+             (Do-Actions RHS match-result WM (append rules-failed rules)))))))  ;otherwise, call do-actions with rules-failed appended ro rules (to see if they have become usable)
 
 
 
@@ -82,7 +77,6 @@
 ;   2.match-result: <list>, return object of match-rule
 ;   3.WM: <list>, list of facts defined within our RPS syntax
 ;   4.rules: <list>, list of rules to be tried.used when calling engine (if no TERMINATE command is encountered)
-;   5.rules-failed: <positive integer> keeps how many rules could not fire
 ;
 ;   optional:
 ;
@@ -103,22 +97,19 @@
 
 
 
-(defun Do-Actions (RHS match-result WM rules rules-failed &optional (bindings (car match-result))  (facts (cadr match-result))    ;initializations
+(defun Do-Actions (RHS match-result WM rules &optional (bindings (car match-result))  (facts (cadr match-result))    ;initializations
                                                                    (command (caar RHS))           (argument (cadar RHS)))
-  (cond ((null RHS) (Engine rules WM rules-failed))   ;if RHS is null (all actions done), recall engine.
+  (cond ((null RHS) (Engine rules WM))   ;if RHS is null (all actions done), recall engine.
     ((eql command 'TERMINATE) WM)                    ;TERMINATE - > stop execution,return WM
     ((eql command 'ADD) (Do-Actions (cdr RHS)        ;ADD - > substitue bindings, add to WM, recall do-actions
                                     match-result 
                                     (WMadd (car (substitute-action (list argument) bindings)) WM) 
-                                    rules 
-                                    rules-failed))  
+                                    rules))  
     ((eql command 'REMOVE) (Do-Actions (cdr RHS)     ;REMOVE - > delete from WM, recall do-actions
                                        match-result 
                                        (WMDelete (car (subseq facts (1- argument) argument)) WM) 
-                                       rules 
-                                       rules-failed))            
+                                       rules ))            
     (T (error "Unrecognized Command"))))             ;undefined command error
-
 
 
 
@@ -126,10 +117,15 @@
 ;  (now just shims over to generic methods in datastructures.lisp)
 ;
 (defun get-LHS (rule)
-  (pattern-list rule))
+  (if (null rule) NIL
+      (pattern-list rule))
+)
 
 (defun get-RHS (rule)
-  (action-list rule))
+  (if (null rule) NIL
+      (action-list rule)
+      )
+)
 
 
 (defun WMadd (fact WM)
@@ -142,12 +138,13 @@
 
 ;; Pasik's Quicksort
 
+
 (defun select (f L key)
   (cond ((null L) L)
 	((funcall f (caddr (car L)) (caddr key)) 
 	 (cons (car L) (select f (cdr L) key)))
-	(t (select f (cdr L) key))
-	))
+	(t (select f (cdr L) key))))
+
 
 (defun quicksort (L &optional (test #'>))
   (if (or (null L) (null (cdr L))) 
@@ -158,12 +155,12 @@
             (quicksort
              (select #'(lambda (x y) 
                          (not (funcall test x y)))
-                     (cdr L) (car L)) test)
-            )
-    ))
+                     (cdr L) (car L)) test))))
+
 
 (defun get-top (n L)
-  (subseq (quicksort L) 0 n)
-)
+  (subseq (quicksort L) 0 n))
+
+
 
 ;;;;
