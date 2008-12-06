@@ -22,9 +22,13 @@
       (or (format T "~[not ok~;ok~] ~d ~s~%" 
 		  (if result 1 0) 
 		  test-number 
-		  (let ((formatted (or label (format NIL "~61a" current))))
-		    (if (< (length formatted) 60) 
-			   formatted (subseq formatted 0 60))))
+		  (or label 
+		      (let ((formatted (format NIL "~61a" current)))
+			(if (< (length formatted) 60) 
+			    formatted 
+			    (subseq formatted 0 60)
+                        )
+		      )))
 	  (tap-output function-tested (cdr tests) (1+ test-number)))
       )
    )
