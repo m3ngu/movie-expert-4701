@@ -34,6 +34,8 @@
        )
 )
 
+(defvar new-actor-rule)
+(defvar update-actor-rule)
 (setf new-actor-rule 
       (make-instance 'rule 
        :pattern-list '(
@@ -58,6 +60,34 @@
 
        )
 )
+
+
+(defvar new-director-rule)
+(defvar update-director-rule)
+(setf new-director-rule 
+      (make-instance 'rule 
+       :pattern-list '(
+		       (user-likes-movie =moviename) 
+		       (director  =directorname =moviename)
+		      ) 
+       :action-list '((ADD (user-likes-director =directorname 0)))
+       :close-on-bindings '(=directorname)
+       :exhaustible T
+       )
+)
+(setf update-director-rule 
+      (make-instance 'rule 
+       :pattern-list '((user-likes-movie =moviename) 
+		       (director  =directorname =moviename) 
+		       (user-likes-director =directorname =w))
+       :action-list '((ADD (user-likes-director =directorname (+ =w 1)))
+		      (REMOVE 3))
+       :match-length 2
+       ; This is *also* true if and only if the rule above is exhausted first
+       ;:exhaustible T 
+       )
+)
+
 ;TRY:
 
 ;(defvar rules-object (initialize test-rule-user-likes-comedy))
