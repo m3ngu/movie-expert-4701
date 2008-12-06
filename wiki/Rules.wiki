@@ -10,5 +10,6 @@
   # Create (user-likes-actor =aname =w) objects
   # Filter (user-likes-actor =aname =w) objects for =w > 3
   # Create (user-likes-movie =mname =w) objects
+  # Remove (user-likes-movie =mname =w) objects if =mname is in user input  
   # Sort (user-likes-movie =mname =w) objects by descending =w
   # Return first 10
