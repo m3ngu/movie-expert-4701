@@ -1,5 +1,9 @@
 #summary Random Notes
 
+= Setting Path =
+
+(setf *DEFAULT-PATHNAME-DEFAULTS* (pathname "/Users/msukan/Documents/Courses/4701 AI/HW4/src/"))
+
 = Ideas/Possible Features =
 
 Should our results somehow indicate, _why_ they were chosen?  For example, if we recommend "Speed Racer" and the reason was the user liked "Matrix", should we display something like "user likes director" next to "Speed Racer"?
