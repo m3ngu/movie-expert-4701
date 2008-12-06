@@ -2,7 +2,7 @@
 
 = Setting Path =
 
-(setf *DEFAULT-PATHNAME-DEFAULTS* (pathname "/Users/msukan/Documents/Courses/4701 AI/HW4/src/"))
+`(setf *DEFAULT-PATHNAME-DEFAULTS* (pathname "/Users/msukan/Documents/Courses/4701 AI/HW4/src/"))`
 
 = Ideas/Possible Features =
 
