@@ -77,9 +77,10 @@
 
 (defun match-rule (rule WM) 
   (let ((patterns (pattern-list rule))
+	(frontload (if (pre-bindings rule) (list (pre-bindings rule) '())))
 	)
     (if (exhausted rule) NIL
-	(let ((result (match-rule-helper patterns rule WM)))
+	(let ((result (match-rule-helper patterns rule WM frontload)))
 	  (if result 
 	      (add-to-closed rule  result)
 	      (exhaust rule)

@@ -11,13 +11,17 @@
 	     :reader  action-list
 	     )
    (exhaustible :initarg :exhaustible :initform nil :reader exhaustible)
+   (match-once  :initarg :match-once  :initform nil :reader match-once)
    (exhausted   :initform nil :accessor exhausted)
+   (pre-bound   :initarg :pre-bindings :initform '() :reader pre-bindings)
   )
 )
 (defmethod initialize-instance :after ((rule RULE) &key)
   (and (= -1 (match-length rule))
        (setf (slot-value rule 'match-length) (length (pattern-list rule)))
-))
+  )
+  (and (match-once rule) (setf (slot-value rule 'exhaustible) T))
+)
 
 (defgeneric add-to-closed (rule result))
 (defmethod add-to-closed ((rule RULE) result)
@@ -28,6 +32,7 @@
 	     )
 	  ))
     (setf (closed-list rule) (cons closure-prefix (closed-list rule)))
+    (and (match-once rule) (exhaust rule))
     result
 ))
 

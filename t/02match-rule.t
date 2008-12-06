@@ -78,6 +78,21 @@
        )
 )
 
+(defvar dumbest-possible-rule)
+(setf  dumbest-possible-rule
+       (make-instance 'rule :pattern-list '((actor  * *)) :match-once T
+		      :action-list NIL
+		      )
+)
+
+(defvar not-that-one!)
+(setf not-that-one!
+      (make-instance 'rule 
+		     :pattern-list '((movie !nope * *))
+		     :action-list NIL
+		     :pre-bindings '(( =NOPE . "The Fellowship of the Ring"))
+))
+
 (run-tests 
  #'match-rule 
  (
@@ -134,7 +149,26 @@
   "Find a 3rd movie with an actor, finding the same movie only once"
   )
   (list (list find-some-actor-once fancy-wm) NIL "No more movies with actors")
-  
+  (list (list dumbest-possible-rule fancy-wm) 
+	'(T ((ACTOR "The Fellowship of the Ring" "Wood, Elijah")))
+	"Match stupidly once")
+  (list (list dumbest-possible-rule fancy-wm) NIL "Don't match stupidly twice")
+  (list (list not-that-one! fancy-wm)
+	'(((=NOPE . "The Fellowship of the Ring"))
+	 ((MOVIE "Quantum of Solace" (ACTION 1) (COMEDY 0))))
+	"Pre-bound non-match")
+   (list (list not-that-one! fancy-wm)
+	 '(((=NOPE . "The Fellowship of the Ring"))
+	   ((MOVIE "The Court Jester" (ACTION 0) (COMEDY 1))))
+	 "Second pre-bound non-match"
+	 )
+  (list (list not-that-one! fancy-wm)
+	'(((=NOPE . "The Fellowship of the Ring"))
+	 ((MOVIE "Sabrina" (ACTION 0) (COMEDY 0))))
+	"Third pre-bound non-match"
+	)
+  (list (list not-that-one! fancy-wm) NIL  "Final (actual) non-match")
+
 )
 	"Tests for the match-rule function, using dummy data"
 )
