@@ -10,6 +10,16 @@ Rules are rules.
   * `(add-to-closed rule result)` Add the fact list in this result (or a prefix of that list, if match-length is set to something less than the maximum)  to the closed list for this rule.
   * `(closedp rule fact-list)` Test if this list of facts is in the closed list (shortcuts quickly for lists of the wrong length).
 
+==Initialization arguments==
+
+  *  :pattern-list
+  *  :action-list
+  *  :match-length
+  *  :close-on-bindings
+  *  :exhaustible
+  *  :match-once
+  *  :pre-bindings
+
 {{{
 (defvar rule1 (make-instance 'RULE 
     :pattern-list '((movie =mname 2006 * * * * *)  (user-input =mname))
@@ -26,6 +36,8 @@ Rules are rules.
   * action-list
   * match-length
   * exhausted
+  * close-on-bindings
+  * match-once
 
 ==Mutators==
 
@@ -38,4 +50,5 @@ Is a partitioned list, that's all...
 ==Methods==
 
   * `(add-fact wm fact)`  Prepends new facts
+  * `(delete-fact wm fact)`  Deletes the fact, if it's there
   * `(candidate-list wm fact-type)`  Returns a list that is guaranteed to include all possible matches for that fact type
