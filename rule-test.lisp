@@ -88,6 +88,17 @@
        )
 )
 
+(defvar filter-actors)
+(setf filter-actors
+  (make-instance 'rule
+   :pattern-list '((user-likes-actor * <cutoff))
+   :action-list '((REMOVE 1))
+   ; cute trick to avoid saving references to dead objects?  Or just stupid?
+   ;:match-length 0
+   :pre-bindings '((=CUTOFF . 3))
+  )
+)
+
 ;TRY:
 
 ;(defvar rules-object (initialize test-rule-user-likes-comedy))
