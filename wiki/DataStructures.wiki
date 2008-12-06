@@ -12,14 +12,17 @@ Rules are rules.
 
 ==Initialization arguments==
 
-  *  :pattern-list
-  *  :action-list
-  *  :match-length
-  *  :close-on-bindings
-  *  :exhaustible
-  *  :match-once
-  *  :pre-bindings
 
+||   Init key         || required?  || content ||  default || 
+||  :pattern-list || Yes  || A list of patterns, as described in MatchDocs ||
+||  :action-list   || Yes  || A list of actions, as described in ActionDocs ||
+||  :match-length  ||  || An integer between 1 and the length of the pattern list || `(length pattern-list)` ||
+||  :close-on-bindings || ||  A list of bind variable names (e.g. `=MOVIENAME`) || NIL ||
+||  :exhaustible  ||  ||  A T/NIL value || NIL ||
+||  :match-once ||  ||  A T/NIL value || NIL ||
+||  :pre-bindings || || A binding list (suitable for `assoc`) || NIL ||
+
+So for example:
 {{{
 (defvar rule1 (make-instance 'RULE 
     :pattern-list '((movie =mname 2006 * * * * *)  (user-input =mname))
