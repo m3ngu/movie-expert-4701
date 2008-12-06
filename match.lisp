@@ -115,7 +115,13 @@
 	   (previous-facts (cadr partial-match-list)) ; facts bound in parent calls
 	   )
 	; Loop over elements in WM, finding matches for the current pattern
-	(do ((current-list (candidate-list WM (car pattern)) (cdr current-list))
+	(do (; current-list is the remaining list of facts of the current type
+	     ; to check.  If the rule has a resume-point, use that instead of 
+	     ; the beginning of the first fact-list
+	     (current-list 
+	      (or (get-resume-point rule) 
+		  (candidate-list WM (car pattern)))
+	      (cdr current-list))
 	     (return-value NIL return-value)
 	     )
 	    ((or return-value (null current-list)) return-value)
@@ -137,7 +143,11 @@
 			       (list new-bindings new-fact-list)
 			       )
 			))
-		  (if answer (setf return-value answer) NIL)
+		  (if answer 
+		      (setf return-value 
+			    (list (car answer) (cadr answer) current-list)
+		      ) 
+		      NIL)
 		)
 		NIL ; proceed to next element
 	  ))) ; end (do...)

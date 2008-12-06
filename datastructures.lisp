@@ -15,6 +15,7 @@
    (exhaustible :initarg :exhaustible :initform nil :reader exhaustible)
    (match-once  :initarg :match-once  :initform nil :reader match-once)
    (exhausted   :initform nil :accessor exhausted)
+   (resume-point :initform NIL :accessor resume-point)
    (pre-bound   :initarg :pre-bindings :initform '() :reader pre-bindings)
   )
 )
@@ -27,23 +28,38 @@
 
 (defgeneric add-to-closed (rule result))
 (defmethod add-to-closed ((rule RULE) result)
-  (let ((closure-prefix 
-	 (if (< (match-length rule) (length (cadr result)))
-	     (prefix (cadr result) (match-length rule))
-	     (cadr result)
+  (let ((result-bindings (car result))
+	(bound-facts (cadr result))
+	(resume-point (caddr result))
+	(bind-names (close-on-bindings rule))
+       )
+    (let
+	((closure-prefix 
+	  (if (< (match-length rule) (length bound-facts))
+	     (prefix bound-facts (match-length rule))
+	     bound-facts
 	     )
 	  ))
-    (setf (closed-list rule) (cons closure-prefix (closed-list rule)))
-    (let ((bind-names (close-on-bindings rule)))
-      (and bind-names
-	   (setf (slot-value rule 'closed-bindings)
-		 (cons
-		  (extract-bound-values bind-names (car result))
-		  (closed-binding-list rule)
-		  )
-    )))
+      (setf (closed-list rule) (cons closure-prefix (closed-list rule))))
+    (and bind-names
+	 (setf (slot-value rule 'closed-bindings)
+	       (cons
+		(extract-bound-values bind-names result-bindings)
+		(closed-binding-list rule)
+		)
+    ))
+    (and (exhaustible rule) (setf (resume-point rule) resume-point))
     (and (match-once rule) (exhaust rule))
-    result
+    ; we don't actually want to return the resume-point:
+    (list result-bindings bound-facts)
+))
+
+(defgeneric get-resume-point (rule))
+;; This is a destructive method!
+(defmethod get-resume-point ((rule RULE))
+  (let ((fact-list (resume-point rule)))
+    (setf (resume-point rule) NIL)
+    fact-list
 ))
 
 (defgeneric closedp (rule factlist))
@@ -91,6 +107,7 @@
 
 (defgeneric add-fact (wm fact))
 (defgeneric add-fact-type (wm type-name))
+(defgeneric clear-fact-type (wm type-name))
 (defmethod add-fact (wm fact)
   (cons fact wm)
 )
@@ -127,6 +144,14 @@
     )
   )
 )
+
+(defmethod clear-fact-type ((wm EXPERT-WM) type-name)
+  (let* ((type-list (fact-lists wm))
+	 (found (assoc type-name type-list))
+	 )
+    (and found (setf (cdr found) NIL))
+))
+
 (defmethod add-fact ((wm EXPERT-WM) fact)
   (let* ((assoc-cell (add-fact-type wm (car fact)))
 	 (current-list (cdr assoc-cell))
