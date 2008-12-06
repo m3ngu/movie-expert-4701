@@ -2,8 +2,8 @@
 
 ;;;;
 ;
-(load "match.lisp")
 (load "datastructures.lisp")
+(load "match.lisp")
 (load "substitute-action.lisp")
 ;
 ;;;; 
@@ -20,7 +20,7 @@
 (defun initialize (rules &optional (so-far NIL) (LHS (caar rules)) (RHS (cadar rules)) (m-l (caddar rules)) (m-1 (cadr (cddar rules))) )
   (if (null rules) 
       so-far
-    (initialize (cdr rules) (append so-far (list (make-instance 'RULE :pattern-list LHS ::action-list RHS :match-length m-l :match-once NIL ))))))
+    (initialize (cdr rules) (append so-far (list (make-instance 'RULE :pattern-list LHS ::action-list RHS :match-length m-l :match-once m-1 ))))))
 
 
 ;;;
