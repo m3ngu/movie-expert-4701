@@ -163,14 +163,16 @@
 
 (defun extract-bound-values (names bindings &optional (rev-values nil))
   (if (null names) (reverse rev-values)
-      (let (
-	    (found (assoc (car names) bindings))
-	    (rest (cdr names))
-	    )
-	(and 
-	 found 
-	 (extract-bound-values rest bindings (cons (cdr found) rev-values))
-	)
-     )
+      (and (listp bindings)
+	   (let (
+		 (found (assoc (car names) bindings))
+		 (rest (cdr names))
+		 )
+	     (and 
+	      found 
+	      (extract-bound-values rest bindings (cons (cdr found) rev-values))
+	      )
+	   )
+       )
   )
 )

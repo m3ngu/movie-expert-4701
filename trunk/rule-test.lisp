@@ -99,6 +99,41 @@
   )
 )
 
+(defvar new-era-rule)
+(defvar update-era-rule)
+;;;;; Note: era bounds are exclusive, not inclusive (startdate of 2000
+;;;;; means movies from 2001 on)
+(setf new-era-rule 
+      (make-instance 'rule 
+       :pattern-list '(
+	 (user-likes-movie =moviename) 
+	 (movie-era  =era-name =startdate =enddate) 
+	 (movie =moviename (& >startdate <enddate)
+	  * * * * * * * * * * * * * * * * * * * * *)
+       ) 
+       :action-list '((ADD (user-likes-era =era-name 0)))
+       :close-on-bindings '(=era-name)
+       :exhaustible T
+       )
+)
+(setf update-era-rule 
+      (make-instance 'rule 
+       :pattern-list 
+       '(
+	 (user-likes-movie =moviename) 
+	 (movie-era  =era-name =startdate =enddate) 
+	 (movie =moviename (&  >startdate  <enddate)
+	  * * * * * * * * * * * * * * * * * * * * *)
+	 (user-likes-era =era-name =w)
+        )
+       :action-list '((ADD (user-likes-era =era-name (+ =w 1)))
+		      (REMOVE 4))
+       :match-length 3
+       ; This is *also* true if and only if the rule above is exhausted first
+       ;:exhaustible T 
+       )
+)
+
 ;TRY:
 
 ;(defvar rules-object (initialize test-rule-user-likes-comedy))
