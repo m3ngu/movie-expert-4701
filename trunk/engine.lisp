@@ -2,26 +2,9 @@
 
 ;;;;
 ;
-;(load "datastructures.lisp")
-;(load "match.lisp")
-;(load "substitute-action.lisp")
-;
-;;;; 
-;interpreter function
-;get rules in syntax fromat, initializes them to RULE type defined in datastructures.lisp, calls engine
-;
-(defun interpreter (rules WM)
-  (engine (initialize rules) WM))
-
-;;;;;
-;
-;initialize a list of rules recusivly:
-;
-(defun initialize (rules &optional (so-far NIL) (LHS (caar rules)) (RHS (cadar rules)) (m-l (caddar rules)) (m-1 (cadr (cddar rules))) )
-  (if (null rules) 
-      so-far
-    (initialize (cdr rules) (append so-far (list (make-instance 'RULE :pattern-list LHS ::action-list RHS :match-length m-l :match-once m-1 ))))))
-
+(load "datastructures.lisp")
+(load "match.lisp")
+(load "substitute-action.lisp")
 
 ;;;
 ;ENGINE   rules  WM   &optional   rules-tried   rule   LHS   RHS   new-rules          [Function]
@@ -53,17 +36,25 @@
 
 
 
-(defun Engine (rules WM &optional (rules-failed NIL) (rule (car rules)) 
-	                          (RHS (get-RHS (car rules)))   ;create  RHS on the go, using this part as an intial let
-                                  (new-rules (cdr rules))       ;ready the new-rules order in case rule can not fire
-                                  (new-rules-failed (append rules-failed (list (car rules)))))   ;ready new-rules failed
+(defun Engine (rules WM &optional (rules-failed NIL))
+  (let 	((rule (car rules)) 
+	(RHS (get-RHS (car rules)))   ;create  RHS on the go, using this part as an intial let
+	(new-rules (cdr rules))       ;ready the new-rules order in case rule can not fire
+	(new-rules-failed (append rules-failed (list (car rules)))))   ;ready new-rules failed
   ;(print (car (candidate-list WM 'RECOMMEND-MOVIE)))  ;for debug purposes
   ;(print (length rules))  ;for debug purposes
-  (cond ((null rules) WM)                                             ;if rules list is empty (all rules failed conseq) just return WM
-    (T (let* ((match-result (match-rule rule WM)))
-         (if (null match-result)                                      ;if no match is found: 
-             (engine new-rules WM new-rules-failed)                   ;call engine again, add that rule to rules-failed
-             (Do-Actions RHS match-result WM (append rules-failed rules)))))))  ;otherwise, call do-actions with rules-failed appended ro rules (to see if they have become usable)
+  (if (null rules) WM                                       ;if rules list is empty (all rules failed conseq) just return WM
+      (let ((match-result (match-rule rule WM)))
+	(if (null match-result)                              ;if no match is found: 
+	    (engine new-rules WM new-rules-failed)                   ;call engine again, add that rule to rules-failed
+             (let ((action-result (Do-Actions RHS match-result WM)))
+	       (if action-result 
+		   (engine (append rules-failed rules) action-result) 
+		   WM
+		   )
+	       )
+	     )
+))))  ;otherwise, call do-actions with rules-failed appended ro rules (to see if they have become usable)
 
 
 
@@ -97,23 +88,23 @@
 
 
 
-(defun Do-Actions (RHS match-result WM rules &optional (bindings (car match-result))  (facts (cadr match-result))    ;initializations
+(defun Do-Actions (RHS match-result WM &optional (bindings (car match-result))  (facts (cadr match-result))    ;initializations
                                                                    (command (caar RHS))           (argument (cadar RHS)))
-  (cond ((null RHS) (Engine rules WM))   ;if RHS is null (all actions done), recall engine.
-    ((eql command 'TERMINATE) WM)                    ;TERMINATE - > stop execution,return WM
+  (cond ((null RHS) WM)   ;if RHS is null (all actions done), recall engine.
+    ((eql command 'TERMINATE) NIL)                   ;TERMINATE - > stop execution
     ((eql command 'ADD) (Do-Actions (cdr RHS)        ;ADD - > substitue bindings, add to WM, recall do-actions
                                     match-result 
                                     (WMadd (car (substitute-action (list argument) bindings)) WM) 
-                                    rules))  
+                                    ))  
     ((eql command 'REMOVE) (Do-Actions (cdr RHS)     ;REMOVE - > delete from WM, recall do-actions
                                        match-result 
                                        (WMDelete (car (subseq facts (1- argument) argument)) WM) 
-                                       rules ))            
+                                        ))            
     (T (error "Unrecognized Command"))))             ;undefined command error
 
 
 
-;;Generelization functions;;
+;;Generalization functions;;
 ;  (now just shims over to generic methods in datastructures.lisp)
 ;
 (defun get-LHS (rule)
