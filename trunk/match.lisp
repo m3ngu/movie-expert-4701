@@ -123,12 +123,13 @@
 	      ((fact (car current-list))  
 	       (new-bindings (match pattern fact input-bindings))
 	       (new-fact-list (append previous-facts (list fact)))
+	       (new-partial-match (list new-bindings new-fact-list))
 	       )
 ; Comment out for debug trace:
 ; (format T "Trying fact ~a against pattern ~a with binding list ~a... ~%" fact pattern input-bindings)
 	    ; If a match is found, recurse with a depth-first search, looking 
 	    ; for matches on the remaining patterns with the updated bindings
-	    (if (and new-bindings (not (closedp rule new-fact-list)))
+	    (if (and new-bindings (not (closedp rule new-partial-match)))
 		(let ((answer (match-rule-helper
 			       (cdr pattern-list)
 			       rule

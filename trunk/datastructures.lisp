@@ -6,6 +6,8 @@
 	     )
    (closed   :initform '()  :accessor closed-list)
    (match-length :initarg :match-length :initform -1 :reader match-length)
+   (closed-bindings :initform '() :accessor closed-binding-list)
+   (close-on-bindings :initarg :close-on-bindings :initform '() :reader close-on-bindings)
    (actions  :initform '();(error "Actions required for rule") 
 	     :initarg :action-list
 	     :reader  action-list
@@ -32,16 +34,38 @@
 	     )
 	  ))
     (setf (closed-list rule) (cons closure-prefix (closed-list rule)))
+    (let ((bind-names (close-on-bindings rule)))
+      (and bind-names
+	   (setf (slot-value rule 'closed-bindings)
+		 (cons
+		  (extract-bound-values bind-names (car result))
+		  (closed-binding-list rule)
+		  )
+    )))
     (and (match-once rule) (exhaust rule))
     result
 ))
 
 (defgeneric closedp (rule factlist))
-(defmethod closedp ((rule RULE) factlist)
-  (if (= (length factlist) (match-length rule))
-      (member factlist (closed-list rule) :test #'memberp)
-      NIL
-      )
+(defmethod closedp ((rule RULE) match-candidate)
+  (let ((factlist       (cadr match-candidate))
+	(match-bindings (car  match-candidate))
+	(bind-names     (close-on-bindings rule))
+	)
+    (or 
+     (if (= (length factlist) (match-length rule))
+	 (member factlist (closed-list rule) :test #'memberp)
+	 NIL
+	 )
+     (and bind-names
+	  (let ((bound-values (extract-bound-values bind-names match-bindings)))
+	    (and bound-values
+		(member bound-values (closed-binding-list rule) :test #'equalp)
+	     )
+           )
+     )
+     )
+  )
 )
 
 (defgeneric exhaust (rule))
@@ -133,5 +157,19 @@
        (eql (car a) (car b))
        (memberp (cdr a) (cdr b))
       )
+  )
+)
+
+(defun extract-bound-values (names bindings &optional (rev-values nil))
+  (if (null names) (reverse rev-values)
+      (let (
+	    (found (assoc (car names) bindings))
+	    (rest (cdr names))
+	    )
+	(and 
+	 found 
+	 (extract-bound-values rest bindings (cons (cdr found) rev-values))
+	)
+     )
   )
 )

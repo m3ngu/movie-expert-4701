@@ -92,6 +92,17 @@
 		     :action-list NIL
 		     :pre-bindings '(( =NOPE . "The Fellowship of the Ring"))
 ))
+(defvar find-movies-with-actors)
+(setf find-movies-with-actors 
+      (make-instance 
+       'rule
+       :close-on-bindings '(=MNAME)
+       :pattern-list '(
+		       (movie =mname (action =a) (comedy =c))
+		       (actor =mname =aname)
+		       )
+       :action-list '()
+))
 
 (run-tests 
  #'match-rule 
@@ -168,6 +179,20 @@
 	"Third pre-bound non-match"
 	)
   (list (list not-that-one! fancy-wm) NIL  "Final (actual) non-match")
+  (list (list find-movies-with-actors fancy-wm)
+	'(((=MNAME . "Quantum of Solace") (=A . 1) (=C . 0) (=ANAME . "Craig, Daniel"))
+	  ((MOVIE "Quantum of Solace" (ACTION 1) (COMEDY 0)) (ACTOR "Quantum of Solace" "Craig, Daniel")))
+	"Find movies with actors using close-on-bindings instead of match-length")
+  (list ( list find-movies-with-actors fancy-wm)
+	'(((=MNAME . "The Fellowship of the Ring") (=A . 0) (=C . 0) (=ANAME . "Wood, Elijah"))
+	  ((MOVIE "The Fellowship of the Ring" (ACTION 0) (COMEDY 0)) (ACTOR "The Fellowship of the Ring" "Wood, Elijah")))
+	"Find another movie with actors using close-on-bindings instead of match-length")
+  (list (list find-movies-with-actors fancy-wm)
+
+	'(((=MNAME . "The Court Jester") (=A . 0) (=C . 1) (=ANAME . "Kaye, Danny"))
+	  ((MOVIE "The Court Jester" (ACTION 0) (COMEDY 1)) (ACTOR "The Court Jester" "Kaye, Danny")))
+	"Find final movie with actors using close-on-bindings instead of match-length")
+  (list (list find-movies-with-actors fancy-wm) NIL "Out of movies with actors")
 
 )
 	"Tests for the match-rule function, using dummy data"
