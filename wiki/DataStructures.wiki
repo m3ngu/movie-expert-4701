@@ -116,10 +116,10 @@ The syntax for patterns is derived from the syntax defined in assignment #1 of t
 
 = Expert-WM =
 
-Is a partitioned list, that's all...
+The working memory is an opaque collection of facts in the form `'(SYMBOL [arbitrary lisp data structure]* )`.  The "type" of a given fact is the first symbol: the movie recommender, for example, begins with facts of type "movie", "actor", "director" and "era"; its final product is facts of type "recommend-movie".
 
 ==Methods==
 
-  * `(add-fact wm fact)`  Prepends new facts
-  * `(delete-fact wm fact)`  Deletes the fact, if it's there
-  * `(candidate-list wm fact-type)`  Returns a list that is guaranteed to include all possible matches for that fact type
+  * `(add-fact wm fact)`  Add a new fact, prepending it to the existing list of facts of the same type.  This is effectively a constant-time operation (linear in the number of fact types currently in the memory).
+  * `(delete-fact wm fact)`  Deletes a fact, if it is present in the working memory.  This takes time linear in the number of facts of the same type as the one being deleted.
+  * `(candidate-list wm fact-type)`  Returns a list of facts that is guaranteed to include facts of the given type (e.g. all movies or all recommendations).
