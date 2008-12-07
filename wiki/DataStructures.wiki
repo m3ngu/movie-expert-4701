@@ -105,10 +105,10 @@ Since our match syntax does not allow for comparisons against fixed values, but 
 The syntax for patterns is derived from the syntax defined in assignment #1 of this course.  There are three important modifications:
 
   #  All patterns must be, at the top level, proper lists, with a symbol or string as their first element:
-    * `'(movie =name ...)`: valid
-    * `'("moviescores" (1 2 3))` valid
-    *  `'some-fact`: INVALID
-    *  `'((nested list) (other nested list))` INVALID
+    * valid: `'(movie =name ...)`
+    * valid: `'("moviescores" (1 2 3))` 
+    *  INVALID: `'some-fact`
+    *  INVALID: `'((nested list) (other nested list))` 
   # The character `*` may be used within a pattern as a wild-card to match any fact (subject to the restriction above that patterns must be proper lists at the top level)
   # As discussed on the first mid-term, sub-patterns with the structure `(\| p1 p2 p3)` may be used in the same manner as `(& p1 p2 p3)`: they match if any, rather than all, of the subpatterns successfully match.
 
