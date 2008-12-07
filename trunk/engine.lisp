@@ -159,7 +159,7 @@
       (subseq string 0 length)
     string))
 
-(defun show-movies-by-name ()
+(defun show-movies-by-name-wide ()
   (format T "~{~&~A~^~30T~A~^~60T~A~^~90T~A~^~120T~A~}"
 		 (mapcar #'(lambda (x) (truncate-string (subseq x 0 (- (length x) 7)) 29))
 			 ;; removes year (length - 7) and truncates at 30-1 
@@ -170,8 +170,27 @@
   )
 )
 
+(defun show-movies-by-name ()
+(format T "~{\"~A\"~%~}" 
+			 ;; removes year (length - 7) and truncates at 30-1 
+			 (sort (copy-list ;; I hope this makes it non-destructive
+				(mapcar #'cadr (candidate-list knowledge-base 'movie)))
+			       'string-lessp)
+  )
+)
 
 (defun show-movies-by-date ()
+  (format T "~{~A~%~}"
+	  (mapcar #'(lambda (x) (format NIL "~{~a \"~a\"~}" x)) 	  
+		  (mapcar #'reverse (sort (copy-list
+					   (mapcar #'(lambda (x) (subseq x 1 3))
+						   (candidate-list knowledge-base 'movie))
+					   ) #'< :key #'cadr))
+		  )
+	  )
+)
+
+(defun show-movies-by-date-wide ()
   (format T "~{~&~A~^~30T~A~^~60T~A~^~90T~A~^~120T~A~}"
 	  ;; removes year (length - 7) and truncates at 30-1 
 	  (mapcar #'(lambda (x) (truncate-string (subseq x 0 (- (length x) 7)) 29)) 
