@@ -1,6 +1,6 @@
 (defvar knowledge-base nil)
-(setf knowledge-base 
-(make-instance 'expert-wm :facts
+
+(defun init-wm () 
 '((movie 
 (movie "Shawshank\ Redemption\,\ The\ \(1994\)" 1994 9.100000 (Action 0) (Adventure 0) (Animation 0) (Biography 0) (Comedy 0) (Crime 0) (Drama 1) (Family 0) (Fantasy 0) (Film-Noir 0) (History 0) (Horror 0) (Musical 0) (Mystery 0) (Romance 0) (Sci-Fi 0) (Sport 0) (Thriller 0) (War 0) (Western 0))
 (movie "Godfather\,\ The\ \(1972\)" 1972 9.100000 (Action 0) (Adventure 0) (Animation 0) (Biography 0) (Comedy 0) (Crime 0) (Drama 1) (Family 0) (Fantasy 0) (Film-Noir 0) (History 0) (Horror 0) (Musical 0) (Mystery 0) (Romance 0) (Sci-Fi 0) (Sport 0) (Thriller 1) (War 0) (Western 0))
@@ -3541,5 +3541,13 @@
 (actor "Wyler\,\ Catherine\ \(I\)" "Roman\ Holiday\ \(1953\)" NIL NIL)
 (actor "Wyler\,\ Judy" "Best\ Years\ of\ Our\ Lives\,\ The\ \(1946\)" NIL NIL)
 (actor "Wyler\,\ Judy" "Roman\ Holiday\ \(1953\)" NIL NIL)
-)))
 )
+(movie-era 
+(movie-era  'SILENT 0 1941)
+(movie-era  'WAR 1940 1951)
+(movie-era  'CLASSICAL 1950 1971)
+(movie-era  'POST-CLASSICAL 1970 1981) 
+(movie-era  'BLOCKBUSTERS 1980 1991)
+(movie-era  'SPECIAL_EFFECTS 1990 2010)
+)
+))

@@ -1,3 +1,5 @@
+;(setf *DEFAULT-PATHNAME-DEFAULTS* (pathname "/Users/msukan/Documents/Courses/4701 AI/HW4/src/"))
+
 (load "engine.lisp")
 (load "knowledge_base.lisp")
 
@@ -25,31 +27,32 @@
 )
 
 (defvar movie-rules)
-(setf movie-rules 
+
+(defun init-rules ()
       (append 
        (list 
 	; ACTOR INFORMATION
 	; create user-likes-actor facts
-;;       (make-instance 'rule 
-;;        :pattern-list '(
-;; 		       (user-likes-movie =moviename) 
-;; 		       (actor  =actorname =moviename * *)
-;; 		      ) 
-;;        :action-list '((ADD (user-likes-actor =actorname 0)))
-;;        :close-on-bindings '(=actorname)
-;;        :exhaustible T
-;;        )
-;;       ; update user-likes-actor facts to have the correct weights
-;;       (make-instance 'rule 
-;;        :pattern-list '((user-likes-movie =moviename) 
-;; 		       (actor  =actorname =moviename * *) 
-;; 		       (user-likes-actor =actorname =w))
-;;        :action-list '((ADD (user-likes-actor =actorname (+ =w 1)))
-;; 		      (REMOVE 3))
-;;        :match-length 2
-;;        :exhaustible T
-;;        )
-;;       ;; DIRECTOR information
+       (make-instance 'rule 
+        :pattern-list '(
+ 		       (user-likes-movie =moviename) 
+ 		       (actor  =actorname =moviename * *)
+ 		      ) 
+        :action-list '((ADD (user-likes-actor =actorname 0)))
+        :close-on-bindings '(=actorname)
+        :exhaustible T
+        )
+       ; update user-likes-actor facts to have the correct weights
+       (make-instance 'rule 
+        :pattern-list '((user-likes-movie =moviename) 
+ 		       (actor  =actorname =moviename * *) 
+ 		       (user-likes-actor =actorname =w))
+        :action-list '((ADD (user-likes-actor =actorname (+ =w 1)))
+ 		      (REMOVE 3))
+        :match-length 2
+        :exhaustible T
+        )
+      ; DIRECTOR information
       ;  create user-likes-director facts
       (make-instance 'rule 
        :pattern-list '(
@@ -895,6 +898,50 @@
      2
      NIL
     )
+
+    ;; Increment  (recommend-movie ...) object for each director user likes
+    
+    (
+     ((user-likes-director =d =w)
+      (director  =d =n)       
+      (recommend-movie =n =r)
+      )
+     ((REMOVE 3)
+      (ADD (recommend-movie =n (+ (* 10 =w) =r)))
+     )
+     2
+     NIL
+    )
+
+    ;; Increment  (recommend-movie ...) object for each actor user likes
+    
+    (
+     ((user-likes-actor =a =w)
+      (actor =a =n * *)       
+      (recommend-movie =n =r)
+      )
+     ((REMOVE 3)
+      (ADD (recommend-movie =n (+ (* 10 =w) =r)))
+     )
+     2
+     NIL
+    )
+
+    ;; Increment  (recommend-movie ...) object for each era user likes
+    
+    (
+     ((user-likes-era =era-name =w)
+      (movie-era  =era-name =startdate =enddate) 
+      (movie =moviename (& >startdate <enddate)
+       * * * * * * * * * * * * * * * * * * * * *)
+      (recommend-movie =moviename =r)
+      )
+     ((REMOVE 4)
+      (ADD (recommend-movie =moviename (+ (* 10 =w) =r)))
+     )
+     3
+     NIL
+    )
 ))))
 
 
@@ -903,15 +950,18 @@
 ;;;; where do the facts come from?
 
 (defun recommend-movies (input-list)
+  
+  (setf knowledge-base (make-instance 'expert-wm :facts (init-wm)))
+  (setf movie-rules (init-rules))
+
+  (print (concatenate 'string "I got your " (write-to-string (length input-list)) " movies. Let me think..."))
+
   (progn
     (mapcar 
      (lambda (input) (add-fact knowledge-base (list 'user-likes-movie input)))
      (reverse input-list)
     )
     (engine movie-rules knowledge-base)
-    (format T "Based on your input, we recommend:~%")
-    (mapcar 
-     (lambda (x) (format T "  ~a~%" (cadr x))) 
-     (get-top 10 (candidate-list knowledge-base 'recommend-movie))
-    )
+    (print "OK, I'm done!  Based on your input, I recommend:")
+    (format nil "~%~:{~&   ~50@A  ~8@A~}~%"  (mapcar #'cdr (get-top 10 (candidate-list knowledge-base 'recommend-movie))))
 ))

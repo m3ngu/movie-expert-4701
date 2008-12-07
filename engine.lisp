@@ -150,7 +150,8 @@
 
 
 (defun get-top (n L)
-  (subseq (quicksort L) 0 n))
+  (when (not (null L))
+  (subseq (quicksort L) 0 n)))
 
 
 
