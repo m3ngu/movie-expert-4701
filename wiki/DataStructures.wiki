@@ -11,8 +11,8 @@ The RULE class defines a set of conditions to search for (specifically, a set of
 
 
 ||   Init key         || required?  || content ||  default || 
-||  :pattern-list || Yes  || A list of patterns, as described in MatchDocs ||
-||  :action-list   || Yes  || A list of actions, as described in ActionDocs ||
+||  :pattern-list || Yes  || A list of patterns, as described below ||
+||  :action-list   || Yes  || A list of actions, as described in the top-level README  ||
 ||  :match-length  ||  || An integer between 1 and the length of the pattern list || `(length pattern-list)` ||
 ||  :close-on-bindings || ||  A list of bind variable names (e.g. `=MOVIENAME`) || NIL ||
 ||  :exhaustible  ||  ||  A T/NIL value || NIL ||
@@ -77,13 +77,8 @@ Certain rules may match multiple times but should fire at most one time.  If the
 
 Since our match syntax does not allow for comparisons against fixed values, but only against bound variables, this facility is supplied to allow rule writers to pre-bind certain values.  The example above could be used in a pattern like `(user-likes-actor =actorname >min-count)`.
 
-==Public interface==
+==Interface==
 
-  * `(add-to-closed rule result)` Add the fact list in this result (or a prefix of that list, if match-length is set to something less than the maximum)  to the closed list for this rule.
-  * `(closedp rule fact-list)` Test if this list of facts is in the closed list (shortcuts quickly for lists of the wrong length).
-
-
-==Private interface==
 
 ===Accessors===
 
@@ -96,9 +91,13 @@ Since our match syntax does not allow for comparisons against fixed values, but 
   * match-once
 
 
-===Mutators===
+===Methods===
 
-  * `exhaust` If this is an exhaustible rule, set exhausted to T.  In any case, return NIL.  (This allows us to limit the number of 20-second exhaustive searches of the working memory that we run.) 
+
+  *  `(exhaust rule)`  Marks a rule as exhausted, if it is an exhaustible rule.  In any case, returns NIL.
+  * `(add-to-closed rule result)` Add the fact list in this result (or a prefix of that list, if match-length is set to something less than the maximum)  to the closed list for this rule.
+  * `(closedp rule fact-list)` Test if this list of facts is in the closed list (shortcuts quickly for lists of the wrong length).
+
 
 
 ==Matching Syntax==
