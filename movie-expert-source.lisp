@@ -16,6 +16,11 @@
 ;;;
 ;;; File 1 of 2: Source
 ;;;
+;;; NOTE: Running the recommendation engine with many inputs (12+) may cause
+;;; a stack overflow on machines with limited resources.  On UNIX, OSX, one
+;;; possible solution to this issue is manually increasing the stack size
+;;; (e.g. "ulimit -s 24000")
+;;;
 ;;; ################################################
 
 (defvar knowledge-base nil)
@@ -288,7 +293,7 @@
     )
     (engine movie-rules knowledge-base)
     (print "OK, I'm done!  Based on your input, I recommend:")
-    (format nil "~%~:{~&   ~50@A  ~8@A~}~%" 
+    (format T "~%~:{~&   ~50@A  ~8@A~}~%" 
 	    (mapcar #'cdr (get-top 10 (candidate-list knowledge-base 'recommend-movie))))
     )
   )
