@@ -3,7 +3,7 @@
 (load "match.lisp")
 (load "test-harness.lisp")
 (load "knowledge_base.lisp")
-
+(setf knowledge-base (make-instance 'expert-wm :facts (init-wm)))
 ; OK, time for some torture tests
 (setf find-lotr 
       (make-instance 'rule 
