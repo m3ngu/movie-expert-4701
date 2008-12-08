@@ -3,6 +3,7 @@
 (load "test-harness.lisp")
 (load "engine.lisp")
 (load "knowledge_base.lisp")
+(setf knowledge-base (make-instance 'expert-wm :facts (init-wm)))
 
 (load "rule-test.lisp")
 
