@@ -1,4 +1,4 @@
-(load "datastructures.lisp")
+(require "datastructures.lisp")
 
 ;; This handles any (hence the name) of the special patterns (!=<>), if passed
 ;; the appropriate function as an argument.  Should only be passed the 
@@ -101,7 +101,13 @@
 ;;      item 1: the bindings from any parent matches in the search tree
 ;;      item 2: the actual facts that were successfully matched in the parent
 ;;              matches
-
+;; Returns:
+;;    NIL, or a three-element list:
+;;      1. The bindings that were used in the successful match
+;;      2. The facts that matched (in order of the patterns they matched)
+;;      3. The position where matching should resume, if this is a rule that
+;;         allows for matches to be resumed instead of restarted
+;;
 ;; Notes:
 ;;  * Both WM and partial-match-list are excellent candidates for refactoring
 ;;    into structures/objects
@@ -143,6 +149,9 @@
 			       (list new-bindings new-fact-list)
 			       )
 			))
+		  ; if the recursive search found a match, return the bindings
+		  ; and facts from the recursive match, and the current position
+		  ; in this list (only the top-level position will be saved)
 		  (if answer 
 		      (setf return-value 
 			    (list (car answer) (cadr answer) current-list)
