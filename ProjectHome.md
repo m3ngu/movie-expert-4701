@@ -1,0 +1,1 @@
+An expert system language and interpreter, written in Common Lisp, that takes a collection of input data regarding the movie preferences of a user, and produces a list of movie recommendations for that user.
